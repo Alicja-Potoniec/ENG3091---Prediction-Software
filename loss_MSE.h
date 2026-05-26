@@ -1,6 +1,7 @@
-#ifndef LOSS_MSE.HPP
-#define LOSS_MSE.HPP
+#ifndef LOSS_MSE_HPP
+#define LOSS_MSE_HPP
 
+#include "loss_model.hpp"
 #include <iostream>
 #include <vector> 
 
@@ -11,9 +12,9 @@ namespace sklearn_cpp{
         double compute_loss(const std::vector<std::vector<double>>& X, const std::vector<double>&Y, const std::vector<double>&w, double b) override {
 
             double total_squared_error{0.0};
-            size_t m{y.size()};
+            size_t m{Y.size()};
 
-            for (size_t=0; i<m; i++){
+            for (size_t i=0; i<m; i++){
 
                 double prediction{0.0};
                 for (size_t j=0; j<w.size(); j++){
@@ -22,7 +23,7 @@ namespace sklearn_cpp{
                 prediction +=b;
 
                 double residual = prediction - Y[i];
-                total_squared_error += (residual^2);
+                total_squared_error += (residual * residual);
             }
             return total_squared_error / (2.0 * m);
         }
@@ -30,13 +31,13 @@ namespace sklearn_cpp{
             
             double ss_res{0.0};
             double ss_tot{0.0};
-            size_t m{y.size()};
+            size_t m{Y.size()};
 
-            double y_mean{0.0};
+            double Y_mean{0.0};
             for (size_t i=0; i<m; i++){
-                y_mean += y[i];
+                Y_mean += Y[i];
             }
-            y_mean /= m;
+            Y_mean /= m;
 
             for (size_t i=0; i<m; i++){
                 double prediction{};
@@ -45,7 +46,8 @@ namespace sklearn_cpp{
                 }
                 prediction += b;
 
-                ss_res =+ (y[i] - prediction)*(y[i] - prediction);
+                ss_res += (Y[i] - prediction)*(Y[i] - prediction);
+                ss_tot += (Y[i] - Y_mean)*(Y[i] - Y_mean);
             }
             return 1.0 - (ss_res/ss_tot);
 
