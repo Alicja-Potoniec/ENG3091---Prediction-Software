@@ -11,7 +11,7 @@ namespace sklearn_cpp{
     class LossModel{
         
         // PURE VIRTUAL FUNCTION
-        // Each subclass (LINEAR AND LOGISTIC) MUST implement this. 
+        // Each subclass (LINEAR AND LOGISTIC) implement this. 
         public:
         virtual double computeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& Y, const std::vector<double>& w, double b) = 0;
 
