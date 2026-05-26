@@ -9,7 +9,7 @@ namespace sklearn_cpp{
 
     class LossMSE: public LossModel{
         public:
-        double compute_loss(const std::vector<std::vector<double>>& X, const std::vector<double>&Y, const std::vector<double>&w, double b) override {
+        double computeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>&Y, const std::vector<double>&w, double b) override {
 
             double total_squared_error{0.0};
             size_t m{Y.size()};
@@ -27,7 +27,7 @@ namespace sklearn_cpp{
             }
             return total_squared_error / (2.0 * m);
         }
-        double compute_r2(const std::vector<std::vector<double>>& X, const std::vector<double>& Y, const std::vector<double>& w, double b) const {
+        double computeR2(const std::vector<std::vector<double>>& X, const std::vector<double>& Y, const std::vector<double>& w, double b) const {
             
             double ss_res{0.0};
             double ss_tot{0.0};
