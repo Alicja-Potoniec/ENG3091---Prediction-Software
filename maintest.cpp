@@ -28,7 +28,7 @@ int main(){
     std::vector<std::vector<double>> X_diabetes;
     std::vector<double> Y_diabetes;
 
-    load = sklearn_cpp::DataLoader::load_csv("ecg.csv", X_diabetes, Y_diabetes, 8, true);
+    load = sklearn_cpp::DataLoader::load_csv("ecg.csv", X_diabetes, Y_diabetes, -1, true);
 
     if(!load){
         std::cerr << "Load Failed.\n";
