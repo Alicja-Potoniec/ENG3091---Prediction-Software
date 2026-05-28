@@ -18,7 +18,7 @@ namespace sklearn_cpp{
         double computeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& Y, const std::vector<double>& w, double b) override{
 
             double total_loss{0.0};
-            size_t m {Y.size()};
+            size_t m{Y.size()};
 
             for (size_t i=0; i<m; i++){
                 double z{0.0};
