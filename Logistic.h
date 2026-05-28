@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <cmath>
 
 #include "base_model.h"
 #include "loss_model.h"
@@ -11,7 +12,7 @@
 namespace sklearn_cpp {
     namespace linear_model {
 
-    class LogisticRegression : public BaseModel {
+    class LogRegBinary : public BaseModel {
 
         private:
             
@@ -19,13 +20,13 @@ namespace sklearn_cpp {
 
             double sigmoid(const double& z) const {
                 return 1.0/ (1.0 + std::exp(-z));
-            };
+            }
 
             double Accuracy( const std::vector<std::vector<double>>& X,
                             const std::vector<double>& Y) const {
                             size_t correct {0};
 
-                            for (size_t i = 0; i < X.size(); i++) {
+                            for (size_t i = 0; i < Y.size(); i++) {
                                 double z{b};
                                  for (size_t j = 0; j < w.size(); j++) {
                                     z += w[j] * X[i][j];
@@ -35,8 +36,8 @@ namespace sklearn_cpp {
                             
                                 if (prediction == Y[i]) {
                                     correct++;
-                                };
-                            };
+                                }
+                            }
                             return static_cast<double>(correct) / Y.size();
                             }
         protected:
@@ -49,15 +50,15 @@ namespace sklearn_cpp {
 
                     for (size_t j = 0; j < w.size(); j++) {
                         z += w[j] * X[i][j];
-                    };
+                    }
 
                     double error = sigmoid(z) - Y[i];
 
                     for (size_t j = 0; j < w.size(); j++) {
                         grad_w[j] += error * X[i][j];
-                    };
+                    }
                     grad_b += error;
-                };
+                }
 
                 double scale = 1.0 / static_cast<double>(m);
 
@@ -68,7 +69,7 @@ namespace sklearn_cpp {
             }
         
         public:
-            LogisticRegression(int n_features, LossModel& loss, double lr = 0.01, int iter = 1000): BaseModel(n_features, lr, iter), loss_model(loss) {}
+            LogRegBinary(int n_features, LossModel& loss, double lr = 0.01, int iter = 1000): BaseModel(n_features, lr, iter), loss_model(loss) {}
             
             std::vector<double> predict(const std::vector<std::vector<double>>& X) const override {
 
@@ -85,7 +86,7 @@ namespace sklearn_cpp {
                     predictions.push_back(sigmoid(z) >= 0.5 ? 1.0 : 0.0);
                 };
                 return predictions;
-            };
+            }
 
             std::vector<double> predictProbability( const std::vector<std::vector<double>>& X) const {
                 std::vector<double> probabilities;
@@ -96,11 +97,11 @@ namespace sklearn_cpp {
 
                     for (size_t j = 0; j < w.size(); j++) {
                         z += w[j] * X[i][j];
-                    };
+                    }
                     probabilities.push_back(sigmoid(z));
-                };
+                }
                 return probabilities;
-            };
+            }
 
             void printLoss(
                 const std::vector<std::vector<double>>& X, const std::vector<double>& Y) const {
@@ -110,20 +111,20 @@ namespace sklearn_cpp {
 
                 std::cout << std::fixed << std::setprecision(4);
                 std::cout << "=====Logistic REGRESSION RESULTS=====\n";
-                std::cout << "Log Loss: " << loss << "\n";
-                std::cout << "Accuracy: " << accuracy  << "\n";
-            };
+                std::cout << "Binary Loss: " << loss << "\n";
+                std::cout << "Accuracy: " << accuracy *100.0 << "%\n";
+            }
             
             void printPara() const {
                 std::cout << std::fixed << std::setprecision(6);
-                std::cout << "=====LEARNED PARAMETERS=====\n";
+                std::cout << "LEARNED PARAMETERS\n";
                 for (size_t j = 0; j < w.size(); j++) {
                     std::cout << "w[" << j << "] = " << w[j] << "\n";
                 }
                 std::cout << "b = " << b << "\n";
-            };
+            }
         };
-    };
-};
+    }
+}
 
 #endif
