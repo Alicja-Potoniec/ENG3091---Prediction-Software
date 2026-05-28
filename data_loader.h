@@ -45,6 +45,12 @@ namespace sklearn_cpp{
             while(std::getline(file, line)){
                 if(line.empty()) continue;
 
+                std::vector<double>row = parse_row(line);
+                if(row.empty()) continue;
+
+                int target = (target_column == -1) ? (int)row.size() - 1 : target_column;
+                Y.push_back(row[target]);
+
                 std::vector<double>features;
                 for(size_t i=0; i<row.size(); i++){
                     if((int)i != target) features.push_back(row[i]);
