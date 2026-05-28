@@ -7,7 +7,7 @@
 #include <cmath>
 
 namespace sklearn_cpp{
-    class LossCrossentropy:public LossModel{
+    class LossCrossEntropy:public LossModel{
 
         private:
             double sigmoid(double z){
