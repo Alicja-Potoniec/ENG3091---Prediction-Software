@@ -12,7 +12,11 @@ namespace sklearn_cpp{
     class DataLoader{
 
         public:
+<<<<<<< fix/syntax
         static bool load_csv(const std::string& filepath, std::vector<std::vector<double>>& X, std::vector <double>& Y, int target_column, bool has_header = true);
+=======
+        static bool load_csv(const std::string& filepath, std::vector<std::vector<double>>& X, std::vector <double>& Y, int target_column = -1, bool has_header = true){
+>>>>>>> local
 
         private:
         static std::vector<double> parse_row(const std::string& line);
