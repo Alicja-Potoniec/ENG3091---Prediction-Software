@@ -1,7 +1,7 @@
 #ifndef LOSS_MSE_HPP
 #define LOSS_MSE_HPP
 
-#include "loss_model.hpp"
+#include "loss_model.h"
 #include <iostream>
 #include <vector> 
 
