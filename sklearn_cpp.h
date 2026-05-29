@@ -9,5 +9,4 @@
 #include "linear.h"
 #include "Logistic.h"
 #include "Multiclass_Logistic.h"
-
 #endif
