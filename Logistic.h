@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <vector>
 #include <cmath>
+#include <memory>
 
 #include "base_model.h"
 #include "loss_model.h"
@@ -14,62 +15,60 @@ namespace sklearn_cpp {
 
     class LogRegBinary : public BaseModel {
 
-        private:
+        protected: 
+        std::unique_ptr<LossModel>loss_model;   
             
-            LossModel& loss_model;   
-
-            double sigmoid(const double& z) const {
+        double sigmoid(const double& z) const {
                 return 1.0/ (1.0 + std::exp(-z));
             }
 
-            double Accuracy( const std::vector<std::vector<double>>& X,
-                            const std::vector<double>& Y) const {
-                            size_t correct {0};
+        double Accuracy(const std::vector<std::vector<double>>& X, const std::vector<double>& Y) const {
+            size_t correct {0};
 
-                            for (size_t i = 0; i < Y.size(); i++) {
-                                double z{b};
-                                 for (size_t j = 0; j < w.size(); j++) {
-                                    z += w[j] * X[i][j];
-                                };
-                                
-                                double prediction = (sigmoid(z) >= 0.5) ? 1.0 :0.0;
-                            
-                                if (prediction == Y[i]) {
-                                    correct++;
-                                }
-                            }
-                            return static_cast<double>(correct) / Y.size();
-                            }
-        protected:
-            void compute_gradients(const std::vector<std::vector<double>>& X, const std::vector<double>& Y, std::vector<double>& grad_w, double& grad_b) override {
-
-                size_t m {Y.size()};
-
-                for (size_t i = 0; i < m; i++) {
-                    double z {b};
-
-                    for (size_t j = 0; j < w.size(); j++) {
-                        z += w[j] * X[i][j];
-                    }
-
-                    double error = sigmoid(z) - Y[i];
-
-                    for (size_t j = 0; j < w.size(); j++) {
-                        grad_w[j] += error * X[i][j];
-                    }
-                    grad_b += error;
+            for (size_t i = 0; i < Y.size(); i++) {
+                double z{b};
+                for (size_t j = 0; j < w.size(); j++) {
+                    z += w[j] * X[i][j];
                 }
+                                
+                double prediction = (sigmoid(z) >= 0.5) ? 1.0 :0.0;
+                            
+                if (prediction == Y[i]) {
+                correct++;
+                }
+            }
+            return static_cast<double>(correct) / Y.size();
+        }
 
-                double scale = 1.0 / static_cast<double>(m);
+        void compute_gradients(const std::vector<std::vector<double>>& X, const std::vector<double>& Y, std::vector<double>& grad_w, double& grad_b) override {
+
+            size_t m {Y.size()};
+
+            for (size_t i = 0; i < m; i++) {
+                double z {b};
 
                 for (size_t j = 0; j < w.size(); j++) {
-                    grad_w[j] *= scale;
+                        z += w[j] * X[i][j];
                 }
-                grad_b *= scale;
+
+                double error = sigmoid(z) - Y[i];
+
+                for (size_t j = 0; j < w.size(); j++) {
+                    grad_w[j] += error * X[i][j];
+                }
+                grad_b += error;
             }
+
+            double scale = 1.0 / static_cast<double>(m);
+
+            for (size_t j = 0; j < w.size(); j++) {
+                grad_w[j] *= scale;
+            }
+            grad_b *= scale;
+        }
         
         public:
-            LogRegBinary(int n_features, LossModel& loss, double lr = 0.01, int iter = 1000): BaseModel(n_features, lr, iter), loss_model(loss) {}
+            LogRegBinary(int n_features, std::unique_ptr<LossModel> loss, double lr = 0.01, int iter = 1000): BaseModel(n_features, lr, iter), loss_model(std::move(loss)) {}
             
             std::vector<double> predict(const std::vector<std::vector<double>>& X) const override {
 
@@ -84,7 +83,7 @@ namespace sklearn_cpp {
                         z += w[j] * X[i][j];
                     };
                     predictions.push_back(sigmoid(z) >= 0.5 ? 1.0 : 0.0);
-                };
+                }
                 return predictions;
             }
 
@@ -106,7 +105,7 @@ namespace sklearn_cpp {
             void printLoss(
                 const std::vector<std::vector<double>>& X, const std::vector<double>& Y) const {
 
-                double loss = loss_model.computeLoss(X, Y, w, b);
+                double loss = loss_model->computeLoss(X, Y, w, b);
                 double accuracy  = Accuracy(X, Y);  
 
                 std::cout << std::fixed << std::setprecision(4);
