@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <vector>
 #include <cmath>
-#include <memory>
 
 #include "base_model.h"
 #include "loss_model.h"
@@ -16,7 +15,7 @@ namespace sklearn_cpp {
         class LogRegBinary : public BaseModel {
 
             protected:
-                std::unique_ptr<LossModel> loss_model;
+                LossModel& loss_model;
 
                 double sigmoid(const double& z) const {
                     return 1.0 / (1.0 + std::exp(-z));
@@ -56,8 +55,8 @@ namespace sklearn_cpp {
                 }
 
             public:
-                LogRegBinary(int n_features, std::unique_ptr<LossModel> loss, double lr = 0.01, int iter = 1000)
-                    : BaseModel(n_features, lr, iter), loss_model(std::move(loss)) {}
+                LogRegBinary(int n_features, LossModel& loss, double lr = 0.01, int iter = 1000)
+                    : BaseModel(n_features, lr, iter), loss_model(loss) {}
 
                 std::vector<double> predict(const std::vector<std::vector<double>>& X) const override {
                     std::vector<double> predictions;
@@ -86,7 +85,7 @@ namespace sklearn_cpp {
                 }
 
                 void printLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& Y) const {
-                    double loss = loss_model->computeLoss(X, Y, w, b);
+                    double loss = loss_model.computeLoss(X, Y, w, b);
                     double accuracy = Accuracy(X, Y);
                     std::cout << std::fixed << std::setprecision(4);
                     std::cout << "=====Logistic REGRESSION RESULTS=====\n";

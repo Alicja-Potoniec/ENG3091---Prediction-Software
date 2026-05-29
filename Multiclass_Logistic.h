@@ -6,7 +6,7 @@
 #include <vector>
 #include <cmath>
 
-#include "logistic.h"
+#include "Logistic.h"
 #include "loss_model.h"
 
 namespace sklearn_cpp {
@@ -15,7 +15,7 @@ namespace sklearn_cpp {
         class LogRegSoftmax : public LogRegBinary {
             private:
 
-                int K;
+                int K{0};
                 std::vector<std::vector<double>> W_multi;
                 std::vector<double> B_multi;
 
@@ -80,7 +80,7 @@ namespace sklearn_cpp {
                 }
                 
             public: 
-                LogRegSoftmax(int n_features,int K, std::unique_ptr<LossModel> loss, double lr = 0.01, int iter = 1000): LogRegBinary(n_features, std::move(loss), lr, iter), K{K} {
+                LogRegSoftmax(int n_features,int K, LossModel& loss, double lr = 0.01, int iter = 1000): LogRegBinary(n_features, loss, lr, iter), K{K} {
                     W_multi.resize(K, std::vector<double>(n_features, 0.0));
                     B_multi.resize(K,0.0);
                 }
@@ -134,7 +134,7 @@ namespace sklearn_cpp {
                     return predictions;
                 }
 
-                void printLoss(const std::vector<std::vector<double>>& X, std::vector<double>& Y) const {
+                void printLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& Y) const {
 
                     std::cout << std::fixed << std::setprecision(4);
 
@@ -143,7 +143,7 @@ namespace sklearn_cpp {
                         std::cout << "Class " << k << ":\n";
                         std::cout << "b = " << B_multi[k] << "\n";
                     }
-                    std::cout << "Loss: " << loss_model->computeLoss(X, Y, W_multi[0], B_multi[0]) << "\n";
+                    std::cout << "Loss: " << loss_model.computeLoss(X, Y, W_multi[0], B_multi[0]) << "\n";
                 }
         };
     }
