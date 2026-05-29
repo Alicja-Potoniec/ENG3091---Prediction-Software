@@ -22,28 +22,34 @@ int main(){
 
     // BINARY LOGISTIC TEST CODE - ECG DATA
     std::cout << "\n=====BINARY LOGISTIC REGRESSION - ECG Dataset=====\n";
-    std::vector<std::vector<double>> X_diabetes;
-    std::vector<double> Y_diabetes;
+    std::vector<std::vector<double>> X_ecg;
+    std::vector<double> Y_ecg;
 
-    load = sklearn_cpp::DataLoader::load_csv("ecg.csv", X_diabetes, Y_diabetes, -1, true);
+    load = sklearn_cpp::DataLoader::load_csv("ecg.csv", X_ecg, Y_ecg);
 
     if(!load){
         std::cerr << "Load Failed\n";
         return 1;
     }
-    std::cout << "Loaded: " << X_diabetes.size() << " samples with: " << X_diabetes[0].size() << " features.\n";
+    std::cout << "Loaded: " << X_ecg.size() << " samples with: " << X_ecg[0].size() << " features.\n";
 
-    sklearn_cpp::DataLoader::normalise(X_diabetes);
+    // CLASS IMBALANCE CHECK
+    int count1 = 0;
+    for(double label : Y_ecg) if(label == 1.0) count1++;
+    std::cout << "Class 1 (Normal): " << count1 << " / " << Y_ecg.size() << "\n";
+    std::cout << "Class 0 (Abnormal): " << Y_ecg.size() - count1 << " / " << Y_ecg.size() << "\n";
+
+    sklearn_cpp::DataLoader::normalise(X_ecg);
     sklearn_cpp::LossCrossEntropy ce_loss;
-    sklearn_cpp::linear_model::LogRegBinary binary_model(X_diabetes[0].size(), ce_loss, 0.001, 10000);
-    binary_model.fit(X_diabetes, Y_diabetes);
-    binary_model.printLoss(X_diabetes, Y_diabetes);
-
-    std::vector<double>predictions = binary_model.predict(X_diabetes);
+    sklearn_cpp::linear_model::LogRegBinary binary_model(X_ecg[0].size(), ce_loss, 0.001, 10000);
+    binary_model.fit(X_ecg, Y_ecg);
+    binary_model.printLoss(X_ecg, Y_ecg);
+    
+    std::vector<double>predictions = binary_model.predict(X_ecg);
     std::cout << "SAMPLE PREDICTIONS\n";
-    for(size_t i=0; i<10; i++){
-        std::string result = predictions[i] == 1.0 ? "Diabetic" : "Not Diabetic";
-        std::string actual = Y_diabetes[i] == 1.0 ? "Diabetic" : "Not Diabetic";
+    for(size_t i=2950; i<2965; i++){
+        std::string result = predictions[i] == 1.0 ? "Normal" : "Abnormal";
+        std::string actual = Y_ecg[i] == 1.0 ? "Normal" : "Abnormal";
         std::cout << "Sample " << i << ": Predicted = " << result << " Actual = " << actual << "\n";
     }
 
@@ -52,7 +58,7 @@ int main(){
     std::vector<std::vector<double>> X_digits;
     std::vector<double> Y_digits;
 
-    load = sklearn_cpp::DataLoader::load_csv("mnist_micro.csv", X_digits, Y_digits);
+    load = sklearn_cpp::DataLoader::load_csv("mnist_micro.csv", X_digits, Y_digits, -1, false);
     if(!load){
         std::cerr << "Load Failed\n";
         return 1;
@@ -60,13 +66,14 @@ int main(){
     std::cout << "Loaded: " << X_digits.size() << " samples with: " << X_digits[0].size() << " features.\n";
 
     sklearn_cpp::DataLoader::normalise(X_digits);
-    sklearn_cpp::linear_model::LogRegSoftmax softmax_model(X_digits[0].size(), 10, ce_loss, 0.001, 1000);
+    sklearn_cpp::LossCrossEntropy ce_loss_multi;
+    sklearn_cpp::linear_model::LogRegSoftmax softmax_model(X_digits[0].size(), 10, ce_loss_multi, 0.01, 1000);
     softmax_model.fit(X_digits, Y_digits);
     softmax_model.printLoss(X_digits, Y_digits);
 
     predictions = softmax_model.predict(X_digits);
     std::cout << "\nSAMPLE PREDICTIONS\n";
-    for(size_t i = 0; i < 10; i++){
+    for(size_t i = 295; i < 310; i++){
         std::cout << "Sample " << i << ": Predicted digit = " << predictions[i] << "  Actual digit = " << Y_digits[i] << "\n";
     }
 
