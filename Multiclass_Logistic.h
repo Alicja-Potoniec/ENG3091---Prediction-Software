@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 #include "Logistic.h"
 #include "loss_model.h"
@@ -98,6 +99,9 @@ namespace sklearn_cpp {
                             }
                             B_multi[k] -= learning_rate * grad_b[k];
                         }
+                        if (i % 100 == 0) {
+                            std::cout << "Iteration " << i << "/" << iterations << "\r" << std::flush;
+}
                     }
                 }
 
@@ -136,14 +140,36 @@ namespace sklearn_cpp {
 
                 void printLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& Y) const {
 
+                    double loss {0.0};
+                    int correct {0};
+                    for (size_t i = 0; i < X.size(); i++) {
+                        std::vector<double> z(K,0.0);
+
+                        for (int k = 0; k < K; k++) {
+                            z[k] = B_multi[k];
+                            for (size_t j = 0; j < X[i].size(); j++) {
+                                z[k] += W_multi[k][j] * X[i][j];
+                            };
+                        };
+
+                        std::vector<double> prob {softmax(z)};
+
+                        int true_class {static_cast<int>(Y[i])};
+                        loss += -std::log(std::max(prob[true_class], 1e-15));
+
+                        int predicted = std::max_element(prob.begin(), prob.end()) - prob.begin();
+                        if (predicted == true_class) {
+                            correct++;
+                        }
+                    }
                     std::cout << std::fixed << std::setprecision(4);
 
                     std::cout << "=====Multiclass Logistic (Softmax) REGRESSION RESULTS=====\n";
                     for (int k = 0; k < K; k++) {
-                        std::cout << "Class " << k << ":\n";
-                        std::cout << "b = " << B_multi[k] << "\n";
+                        std::cout << "Class " << k << ": b = " << B_multi[k] << "\n";
                     }
-                    std::cout << "Loss: " << loss_model.computeLoss(X, Y, W_multi[0], B_multi[0]) << "\n";
+                    std::cout << "Loss: " << loss / X.size() << "\n";
+                    std::cout << "Accuracy: " << (static_cast<double>(correct) / X.size()) * 100 << "%\n";
                 }
         };
     }
