@@ -7,7 +7,7 @@
 #include <cmath>
 #include <algorithm>
 
-#include "Logistic.h"
+#include "LogReg_binary.h"
 #include "loss_model.h"
 
 namespace sklearn_cpp {
