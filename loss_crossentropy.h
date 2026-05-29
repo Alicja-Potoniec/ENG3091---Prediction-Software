@@ -27,7 +27,7 @@ namespace sklearn_cpp{
                 }
                 z += b;
                 double prediction = sigmoid(z);
-                prediction = std::max(1e-15, std::min(1.0 - 1e-15, sigmoid(z)));
+                prediction = std::max(1e-15, std::min(1.0 - 1e-15, prediction));
                 total_loss += (Y[i] * std::log(prediction))+((1.0-Y[i])* std::log(1.0-prediction));
             }
             return -total_loss/m;
