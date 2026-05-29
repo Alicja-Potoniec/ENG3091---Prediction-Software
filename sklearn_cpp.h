@@ -7,5 +7,7 @@
 #include "loss_crossentropy.h"
 #include "base_model.h"
 #include "linear.h"
+#include "Logistic.h"
+#include "Multiclass_Logistic.h"
 
 #endif
