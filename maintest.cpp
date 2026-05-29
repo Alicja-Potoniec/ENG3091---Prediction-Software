@@ -38,14 +38,8 @@ int main(){
     sklearn_cpp::linear_model::LogRegBinary binary_model(X_diabetes[0].size(), ce_loss, 0.001, 10000);
     binary_model.fit(X_diabetes, Y_diabetes);
     binary_model.printLoss(X_diabetes, Y_diabetes);
-
-    sklearn_cpp::LossCrossEntropy ce_loss;
-    sklearn_cpp::linear_model::LogRegBinary model(X_diabetes[0].size(), ce_loss, 0.001, 10000);
-
-    model.fit(X_diabetes, Y_diabetes);
-    model.printLoss(X_diabetes, Y_diabetes);
     
-    std::vector<double>predictions = model.predict(X_diabetes);
+    std::vector<double>predictions = binary_model.predict(X_diabetes);
     std::cout << "SAMPLE PREDICTIONS\n";
     for(size_t i=0; i<10; i++){
         std::string result = predictions[i] == 1.0 ? "Diabetic" : "Not Diabetic";
