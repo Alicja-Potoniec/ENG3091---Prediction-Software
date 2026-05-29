@@ -103,9 +103,9 @@ namespace sklearn_cpp{
         BaseModel(int n_features, double lr=0.01, int iter=1000): w (n_features, 0.0), b(0.0), learning_rate(lr), iterations (iter){}
 
         // VIRTUAL DESTRUCTOR - to prevent memory bottleneck
-        // 
         virtual ~BaseModel() = default;
         
+        //-------------------
         // FIT
         // ------------------
         // PUBLIC TRAINING
