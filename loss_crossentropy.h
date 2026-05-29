@@ -60,7 +60,7 @@ namespace sklearn_cpp{
                 // Design choice.
                 // log(0) is -infinity, which makes the loss NaN/infinity when the model becomes confident (p saturates to 0 or 1)
                 // Moving p away from the endpoints by 1e-15 keeps the logs finite.
-                if(prediction < 1e-15) preditction = 1e-15;
+                if(prediction < 1e-15) prediction = 1e-15;
                 else if(prediction > 1.0 - 1e-15) prediction = 1.0 - 1e-15;
                 total_loss += (Y[i] * std::log(prediction))+((1.0-Y[i])* std::log(1.0-prediction));
             }
