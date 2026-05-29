@@ -28,7 +28,7 @@ int main(){
     std::vector<std::vector<double>> X_diabetes;
     std::vector<double> Y_diabetes;
 
-    load = sklearn_cpp::DataLoader::load_csv("ecg.csv", X_diabetes, Y_diabetes);
+    load = sklearn_cpp::DataLoader::load_csv("ecg.csv", X_diabetes, Y_diabetes, -1, true);
 
     if(!load){
         std::cerr << "Load Failed.\n";
@@ -38,10 +38,12 @@ int main(){
 
     sklearn_cpp::DataLoader::normalise(X_diabetes);
 
-    sklearn_cpp::linear_model::LogRegBinary model(X_diabetes[0].size(), std::make_unique<sklearn_cpp::LossCrossEntropy>(), 0.001, 10000);
+    sklearn_cpp::LossCrossEntropy ce_loss;
+    sklearn_cpp::linear_model::LogRegBinary model(X_diabetes[0].size(), ce_loss, 0.001, 10000);
 
     model.fit(X_diabetes, Y_diabetes);
     model.printLoss(X_diabetes, Y_diabetes);
+    model.printPara();
 
     std::vector<double>predictions = model.predict(X_diabetes);
     std::cout << "SAMPLE PREDICTIONS\n";

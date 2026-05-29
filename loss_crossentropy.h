@@ -7,7 +7,7 @@
 #include <cmath>
 
 namespace sklearn_cpp{
-    class LossCrossentropy:public LossModel{
+    class LossCrossEntropy:public LossModel{
 
         private:
             double sigmoid(double z) const {
@@ -18,7 +18,7 @@ namespace sklearn_cpp{
         double computeLoss(const std::vector<std::vector<double>>& X, const std::vector<double>& Y, const std::vector<double>& w, double b) override{
 
             double total_loss{0.0};
-            size_t m {Y.size()};
+            size_t m{Y.size()};
 
             for (size_t i=0; i<m; i++){
                 double z{0.0};
@@ -27,10 +27,7 @@ namespace sklearn_cpp{
                 }
                 z += b;
                 double prediction = sigmoid(z);
-<<<<<<< update/logistic_regression
-=======
-                prediction = std::max(1e-15, std::min(1.0 - 1e-15, prediction));
->>>>>>> local
+                prediction = std::max(1e-15, std::min(1.0 - 1e-15, sigmoid(z)));
                 total_loss += (Y[i] * std::log(prediction))+((1.0-Y[i])* std::log(1.0-prediction));
             }
             return -total_loss/m;
