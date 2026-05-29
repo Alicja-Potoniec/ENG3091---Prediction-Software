@@ -7,13 +7,13 @@
 #include <cmath>
 #include <memory>
 
-#include "base_model.h"
+#include "loss_model.h"
 #include "loss_model.h"
 
 namespace sklearn_cpp {
     namespace linear_model {
 
-    class LogRegBinary : public BaseModel {
+    class LogRegBinary : public LossModel {
 
         protected: 
         std::unique_ptr<LossModel>loss_model;   
